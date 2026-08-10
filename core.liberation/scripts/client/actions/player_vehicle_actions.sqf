@@ -3,7 +3,7 @@ params ["_add"];
 if (_add) then {
     if (count GRLIB_player_vehicle_actions == 0) then {
         // Juke Box
-        GRLIB_player_vehicle_actions pushBack (player addAction ["<t color='#ffffff'>" + localize "STR_JKB_ACTION" + "</t>","addons\JKB\fn_openJukeBox.sqf","",0,false,true,"","!(isNull objectParent player)"]);
+        //GRLIB_player_vehicle_actions pushBack (player addAction ["<t color='#ffffff'>" + localize "STR_JKB_ACTION" + "</t>","addons\JKB\fn_openJukeBox.sqf","",0,false,true,"","!(isNull objectParent player)"]);
         // Fast Eject Crew
         GRLIB_player_vehicle_actions pushBack (player addAction ["<t color='#0080F0'>" + localize "STR_EJECT_CREW" + "</t> <img size='1' image='res\ui_veh.paa'/>","scripts\client\actions\do_eject.sqf","",999,false,true,"","call GRLIB_checkEjectCrew"]);
         // Fast Onboard Crew
