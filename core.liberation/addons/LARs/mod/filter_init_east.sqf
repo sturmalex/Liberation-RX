@@ -32,6 +32,10 @@ if (["CFP_", GRLIB_mod_east, true] call F_startsWith) then {
 if (["GM_", GRLIB_mod_east, true] call F_startsWith) then {
 	GRLIB_MOD_signature = GRLIB_MOD_signature + ["gm_"];
 };
+// Add Cold War GM/CSLA Weapons
+if (["CW_", GRLIB_mod_east, true] call F_startsWith) then {
+	GRLIB_MOD_signature = GRLIB_MOD_signature + ["US85_","CSLA_","AFMC_","FIA_","gm_"];
+};
 // Add OPTRE Weapons
 if (["OPTRE", GRLIB_mod_east, true] call F_startsWith) then {
 	GRLIB_MOD_signature = GRLIB_MOD_signature + ["optre_"];

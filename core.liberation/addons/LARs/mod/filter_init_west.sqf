@@ -34,6 +34,11 @@ if (["CFP_", GRLIB_mod_west, true] call F_startsWith) then {
 if (["GM_", GRLIB_mod_west, true] call F_startsWith) then {
 	[] call compileFinal preprocessFileLineNumbers "addons\LARs\mod\filter_GM.sqf";
 };
+// Add My Arsenal
+if (["CW_", GRLIB_mod_west, true] call F_startsWith) then {
+	[] call compileFinal preprocessFileLineNumbers "addons\LARs\mod\filter_GM.sqf";
+	[] call compileFinal preprocessFileLineNumbers "addons\LARs\mod\filter_IC.sqf";
+}; 
 // Add OPTRE Weapons
 if (["OPTRE", GRLIB_mod_west, true] call F_startsWith) then {
 	[] call compileFinal preprocessFileLineNumbers "addons\LARs\mod\filter_OPTRE.sqf";

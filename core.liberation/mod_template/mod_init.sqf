@@ -2,6 +2,7 @@
 
 GRLIB_mod_list_west = [
 	"A3_BLU",
+	"CW_WEST",
 	"A3_OPF",
 	"A3_BLU_PAC",
 	"A3_BLU_LT",
@@ -12,6 +13,7 @@ GRLIB_mod_list_west = [
 
 GRLIB_mod_list_east = [
 	"A3_OPF",
+	"CW_EAST",
 	"A3_BLU",
 	"A3_IND",
 	"A3_OPF_PAC",
@@ -23,6 +25,8 @@ GRLIB_mod_list_east = [
 GRLIB_mod_list_name = [
 	["A3_BLU", "ArmA3 NATO", WEST],
 	["A3_OPF", "ArmA3 CSAT", EAST],
+	["CW_WEST", "Cold War WEST GM/CSLA", WEST],
+	["CW_EAST", "Cold War EAST GM/CSLA", EAST],
 	["A3_IND", "ArmA3 AAF", INDEPENDENT],
 	["A3_BLU_PAC", "ArmA3 NATO Pacific", WEST],
 	["A3_BLU_LT", "ArmA3 NATO PMC", WEST],

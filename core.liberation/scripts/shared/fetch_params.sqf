@@ -55,6 +55,7 @@ GRLIB_enabledPrefix = [
 	["ASZ_", GRLIB_ASZ_enabled],
 	["CFP_", GRLIB_CFP_enabled],
 	["CP_", GRLIB_CUP_enabled],
+	["CW_", GRLIB_GM_enabled],
 	["CWR3_", GRLIB_CWR_enabled],
 	["EJW_", GRLIB_EJW_enabled],
 	["GM_", GRLIB_GM_enabled],
