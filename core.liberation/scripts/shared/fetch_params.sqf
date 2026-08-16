@@ -119,9 +119,9 @@ GRLIB_use_exclusive = (GRLIB_use_exclusive == 1);
 
 // Classename MOD source
 [] call compileFinal preprocessFileLineNumbers "mod_template\mod_init.sqf";
-LRX_mod_list_west = [];
-LRX_mod_list_east = [];
-LRX_mod_list_name = [];
+LRX_mod_list_west = +GRLIB_mod_list_west;
+LRX_mod_list_east = +GRLIB_mod_list_east;
+LRX_mod_list_name = +GRLIB_mod_list_name;
 
 if (GRLIB_LRX_Template_enabled) then {
 	LRX_Template_version = getNumber (configFile >> "cfgPatches" >> "LRX_Template" >> "version");
@@ -133,6 +133,11 @@ if (GRLIB_LRX_Template_enabled) then {
 			GRLIB_mod_list_name append LRX_mod_list_name;
 		} else { abort_loading = true };
 	};
+} else {
+	GRLIB_mod_list_west = +LRX_mod_list_west;
+	GRLIB_mod_list_east = +LRX_mod_list_east;
+	GRLIB_mod_list_name = +LRX_mod_list_name;
+	diag_log "--- LRX: External LRX_Template mod not detected; using built-in mod_template definitions";
 };
 if (abort_loading) exitWith { abort_loading_msg = format [
 	"********************************\n
