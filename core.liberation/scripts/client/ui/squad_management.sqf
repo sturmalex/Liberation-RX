@@ -68,7 +68,7 @@ while { dialog && alive player && _membercount > 0 } do {
 		private _ai_score = _selectedmember getVariable ["PAR_AI_score", nil];
 		if (!isNil "_ai_score") then {
 			if (_ai_rank < (_pl_rank - 1)) then {
-				private _cost = (_ai_score * 17);
+				private _cost = (_ai_score * 5);
 				private _msg = format [localize "STR_UI_PROMOTE_CONFIRM",name _selectedmember,_cost];
 				private _result = [_msg, localize "STR_UI_WARNING_TITLE", true, true] call BIS_fnc_guiMessage;
 				if (_result) then {
