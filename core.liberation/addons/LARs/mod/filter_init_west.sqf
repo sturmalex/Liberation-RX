@@ -108,7 +108,7 @@ if (["USP_", GRLIB_mod_west, true] call F_startsWith) then {
 };
 
 // Magazines (common to All)
-(
+/*(
 	"
 	getNumber (_x >> 'scope') > 1 &&
 	!('VehicleMagazine' in ([_x, true] call BIS_fnc_returnParents)) &&
@@ -116,3 +116,4 @@ if (["USP_", GRLIB_mod_west, true] call F_startsWith) then {
 	"
 	configClasses (configfile >> "CfgMagazines")
 ) apply { GRLIB_whitelisted_from_arsenal pushBackUnique (configName _x)} ;
+*/
