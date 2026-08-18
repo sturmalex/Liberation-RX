@@ -29,3 +29,12 @@ GRLIB_MOD_signature = GRLIB_MOD_signature + ["gm_"];
 	"
 	configClasses (configfile >> "CfgGlasses" )
 ) apply { GRLIB_whitelisted_from_arsenal pushback (configName _x) } ;
+
+// Magazines
+(
+	"
+	tolower (getText (_x >> 'dlc')) == 'gm' &&
+	([(configName _x)] call is_allowed_item)
+	"
+	configClasses (configfile >> "CfgMagazines")
+) apply { GRLIB_whitelisted_from_arsenal pushBackUnique (configName _x)} ;

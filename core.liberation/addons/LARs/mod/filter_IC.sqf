@@ -30,3 +30,12 @@ GRLIB_MOD_signature = GRLIB_MOD_signature + ["US85_","CSLA_","AFMC_","FIA_"];
 	"
 	configClasses (configfile >> "CfgGlasses" )
 ) apply { GRLIB_whitelisted_from_arsenal pushback (configName _x) } ;
+
+// Magazines
+(
+	"
+	([(configName _x), GRLIB_MOD_signature] call F_startsWithMultiple) &&
+	([(configName _x)] call is_allowed_item)
+	"
+	configClasses (configfile >> "CfgMagazines")
+) apply { GRLIB_whitelisted_from_arsenal pushBackUnique (configName _x)} ;
