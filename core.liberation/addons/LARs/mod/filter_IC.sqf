@@ -1,5 +1,4 @@
 // Add DLC: CSLA Iron Curtain
-
 GRLIB_MOD_signature = GRLIB_MOD_signature + ["US85_","CSLA_","AFMC_","FIA_"];
 
 // Weapons + Equipements (uniforms, etc..)
@@ -35,6 +34,8 @@ GRLIB_MOD_signature = GRLIB_MOD_signature + ["US85_","CSLA_","AFMC_","FIA_"];
 (
 	"
 	([(configName _x), GRLIB_MOD_signature] call F_startsWithMultiple) &&
+	getNumber (_x >> 'scope') > 1 &&
+	!('VehicleMagazine' in ([_x, true] call BIS_fnc_returnParents)) &&
 	([(configName _x)] call is_allowed_item)
 	"
 	configClasses (configfile >> "CfgMagazines")

@@ -34,6 +34,8 @@ GRLIB_MOD_signature = GRLIB_MOD_signature + ["gm_"];
 (
 	"
 	tolower (getText (_x >> 'dlc')) == 'gm' &&
+	getNumber (_x >> 'scope') > 1 &&
+	!('VehicleMagazine' in ([_x, true] call BIS_fnc_returnParents)) &&
 	([(configName _x)] call is_allowed_item)
 	"
 	configClasses (configfile >> "CfgMagazines")
