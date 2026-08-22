@@ -107,12 +107,12 @@ if (["USP_", GRLIB_mod_west, true] call F_startsWith) then {
     [] call compileFinal preprocessFileLineNumbers "addons\LARs\mod\filter_USP.sqf";
 };
 
-// Magazines (common to All)
-//(
-//	"
-//	getNumber (_x >> 'scope') > 1 &&
-//	!('VehicleMagazine' in ([_x, true] call BIS_fnc_returnParents)) &&
-//	([(configName _x)] call is_allowed_item)
-//	"
-//	configClasses (configfile >> "CfgMagazines")
-//) apply { GRLIB_whitelisted_from_arsenal pushBackUnique (configName _x)} ;
+ Magazines (common to All)
+(
+	"
+	getNumber (_x >> 'scope') > 1 &&
+	!('VehicleMagazine' in ([_x, true] call BIS_fnc_returnParents)) &&
+	([(configName _x)] call is_allowed_item)
+	"
+	configClasses (configfile >> "CfgMagazines")
+) apply { GRLIB_whitelisted_from_arsenal pushBackUnique (configName _x)} ;
