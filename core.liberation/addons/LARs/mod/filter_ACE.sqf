@@ -45,3 +45,12 @@ GRLIB_blacklisted_from_arsenal append [
 	"
 	configClasses (configfile >> "CfgWeapons")
 ) apply { GRLIB_whitelisted_from_arsenal pushback (configName _x)} ;
+
+(
+	"
+	getNumber (_x >> 'scope') > 1 &&
+	!('VehicleMagazine' in ([_x, true] call BIS_fnc_returnParents)) &&
+	([(configName _x)] call is_allowed_item)
+	"
+	configClasses (configfile >> "CfgMagazines")
+) apply { GRLIB_blacklisted_from_arsenal; pushBackUnique (configName _x)} ;
