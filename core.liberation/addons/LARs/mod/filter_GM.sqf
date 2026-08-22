@@ -30,12 +30,10 @@ GRLIB_MOD_signature = GRLIB_MOD_signature + ["gm_"];
 	configClasses (configfile >> "CfgGlasses" )
 ) apply { GRLIB_whitelisted_from_arsenal pushback (configName _x) } ;
 
-// Magazines (removed scope)
+// Magazines
 (
 	"
-	tolower (getText (_x >> 'dlc')) == 'gm' &&
-	!('VehicleMagazine' in ([_x, true] call BIS_fnc_returnParents)) &&
-	([(configName _x)] call is_allowed_item)
+	tolower (getText (_x >> 'dlc')) == 'gm'
 	"
 	configClasses (configfile >> "CfgMagazines")
 ) apply { GRLIB_whitelisted_from_arsenal pushBackUnique (configName _x)} ;
