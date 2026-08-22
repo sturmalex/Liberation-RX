@@ -27,27 +27,27 @@ crewman_classname = "B_crew_F";
 uavs_terminal_typename = "B_UavTerminal";
 blufor_flag = "Flag_NATO_F";
 
-// [CLASSNAME, MANPOWER, AMMO, FUEL, RANK]
+// [CLASSNAME, MANPOWER, AMMO, FUEL, RANK, DESC]
 infantry_units_west = [
-	["Alsatian_Random_F",0,0,0,GRLIB_perm_max],
-	["Fin_random_F",0,0,0,0],
-	["B_Soldier_F",1,0,0,0],
-	["B_medic_F",1,0,0,0],
-	["B_engineer_F",1,0,0,0],
-	["B_Soldier_GL_F",1,0,0,GRLIB_perm_inf],
-	["B_soldier_M_F",1,0,0,GRLIB_perm_inf],
-	["B_soldier_LAT_F",1,0,0,0],
-	["B_Sharpshooter_F",1,0,0,GRLIB_perm_inf],
-	["B_HeavyGunner_F",1,0,0,GRLIB_perm_inf],
-	["B_recon_F",1,0,0,GRLIB_perm_log],
-	["B_diver_F",1,0,0,GRLIB_perm_log],
-	["B_Recon_Sharpshooter_F",1,0,0,GRLIB_perm_log],
-	["B_soldier_AA_F",1,0,0,GRLIB_perm_log],
-	["B_soldier_AT_F",1,0,0,GRLIB_perm_log],
-	["B_sniper_F",1,0,0,GRLIB_perm_log],
-	["B_soldier_PG_F",1,0,0,GRLIB_perm_log],
-	[crewman_classname,1,0,0,GRLIB_perm_inf],
-	[pilot_classname,1,0,0,GRLIB_perm_log]
+	["Alsatian_Random_F",0,0,0,GRLIB_perm_max,"Alsatian"],
+	["Fin_random_F",0,0,0,0,"Dog"],
+	["B_Soldier_F",1,0,0,0,"Rifleman"],
+	["B_medic_F",1,0,0,0,"Combat Medic"],
+	["B_engineer_F",1,0,0,0,"Combat Engineer"],
+	["B_Soldier_GL_F",1,0,0,GRLIB_perm_inf,"Grenadier"],
+	["B_soldier_M_F",1,0,0,GRLIB_perm_inf,"Marksman"],
+	["B_soldier_LAT_F",1,0,0,0,"Light AT"],
+	["B_Sharpshooter_F",1,0,0,GRLIB_perm_inf,"Sharpshooter"],
+	["B_HeavyGunner_F",1,0,0,GRLIB_perm_inf,"Machinegunner"],
+	["B_recon_F",1,0,0,GRLIB_perm_log,"Recon"],
+	["B_diver_F",1,0,0,GRLIB_perm_log,"Diver"],
+	["B_Recon_Sharpshooter_F",1,0,0,GRLIB_perm_log,"Recon Sharpshooter"],
+	["B_soldier_AA_F",1,0,0,GRLIB_perm_log,"AA Specialist"],
+	["B_soldier_AT_F",1,0,0,GRLIB_perm_log,"AT Specialist"],
+	["B_sniper_F",1,0,0,GRLIB_perm_log,"Sniper"],
+	["B_soldier_PG_F",1,0,0,GRLIB_perm_log,"Platoon Gunner"],
+	[crewman_classname,1,0,0,GRLIB_perm_inf,"Crewman"],
+	[pilot_classname,1,0,0,GRLIB_perm_log,"Pilot"]
 ];
 
 units_loadout_overide = [
@@ -110,21 +110,26 @@ air_vehicles = [
 	["I_Heli_light_03_dynamicLoadout_F",10,500,20,GRLIB_perm_air],
 	//["I_Plane_Fighter_03_dynamicLoadout_F", 10,3500,20,GRLIB_perm_max],
 	["B_Heli_Transport_03_F",10,1700,35,GRLIB_perm_air],
-	["B_Heli_Transport_01_F",10,2000,35,GRLIB_perm_tank],
+	["B_Heli_Transport_01_F",10,1000,35,GRLIB_perm_tank],
+	["B_Heli_Transport_01_pylons_F",1,1500,5,GRLIB_perm_air],
+	["B_Heli_Transport_01_unarmed_F",1,500,5,GRLIB_perm_air],
 	["B_T_VTOL_01_infantry_F",10,1300,40,GRLIB_perm_air],
 	["B_T_VTOL_01_vehicle_F",10,1400,40,GRLIB_perm_air],
 	["B_T_VTOL_01_armed_F",20,2500,40,GRLIB_perm_max],
 	["B_Heli_Attack_01_dynamicLoadout_F",10,2250,30,GRLIB_perm_air],
+	["B_Heli_Attack_01_pylons_dynamicLoadout_F",10,2550,30,GRLIB_perm_air],
 	["B_Plane_CAS_01_dynamicLoadout_F",20,3000,50,GRLIB_perm_max],
 	["B_Plane_Fighter_01_F",20,4500,50,GRLIB_perm_max],
 	["B_Plane_Fighter_01_Stealth_F",20,2000,50,GRLIB_perm_max]
 ];
 
 blufor_air = [
-	"B_Heli_Attack_01_F",
+	"B_Heli_Attack_01_dynamicLoadout_F",
+	"B_Heli_Attack_01_pylons_dynamicLoadout_F",
+	"B_Heli_Transport_01_pylons_F",
 	"B_Plane_CAS_01_dynamicLoadout_F",
 	"B_Plane_Fighter_01_F",
-	"B_Heli_Attack_01_F"
+	"B_Heli_Attack_01_dynamicLoadout_F"
 ];
 
 static_vehicles = [

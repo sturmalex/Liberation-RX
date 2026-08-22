@@ -9,7 +9,7 @@ if (_sector in active_sectors + blufor_sectors) exitWith {
 };
 
 private _sector_pos = markerPos _sector;
-if (([_sector_pos, (GRLIB_sector_size * 2), GRLIB_side_friendly] call F_getUnitsCount) == 0 && !GRLIB_Commander_mode) exitWith {
+if (([_sector_pos, (GRLIB_sector_size * 2), GRLIB_side_friendly, 1] call F_getUnitsCount) == 0 && !GRLIB_Commander_mode) exitWith {
 	diag_log format ["--- LRX Manage Sector: Sector %1 have no more enemy, aborting.", _sector];
 };
 
@@ -60,7 +60,7 @@ if (GRLIB_Commander_mode) then {
 };
 
 private _count_players = count _active_players;
-diag_log format ["Spawn Defend Sector %1 - player in combat %2 / readiness %3 at %4", _sector, _count_players, combat_readiness, time];
+diag_log format ["Spawn Attack Sector %1 - player in combat %2 / readiness %3 at %4", _sector, _count_players, combat_readiness, time];
 
 // Sector type refactored using a switch statement
 switch true do {
@@ -152,10 +152,10 @@ switch true do {
 				private _pos = markerPos [_sector, true];
 				private _sound = "A3\data_f_curator\sound\cfgsounds\air_raid.wss";
 				while { _sector in active_sectors } do {
-					for "_i" from 0 to (floor(random 4)) do {
+					for "_i" from 0 to (floor random 4) do {
 						if !(_sector in blufor_sectors) then {
-							playSound3D [_sound, _pos, false, AGLToASL _pos, 5, 1, 1000];
-							sleep (5 + floor(random 4));
+							[_sound, objNull, false, AGLToASL _pos, 5, 1, 1000] call F_playSound;
+							sleep (5 + floor random 4);
 						};
 					};
 					sleep 60;
@@ -269,7 +269,7 @@ if (count _vehtospawn > 0) then {
 		[_x, _infsquad1, _sector_pos, _sector] spawn {
 			params ["_classname", "_type", "_sector_pos", "_sector"];
 			private _pos = [_sector_pos, (80 + floor random 100)] call F_getRandomPos;
-			private _vehicle = [_pos, _classname, 10, GRLIB_side_enemy, _type] call F_libSpawnVehicle;
+			private _vehicle = [_pos, _classname, 5, GRLIB_side_enemy, _type] call F_libSpawnVehicle;
 			if (!isNull _vehicle) then {
 				(missionNamespace getVariable format ["LRX_sector_%1_vehicles", _sector]) pushBack _vehicle;
 				[group (driver _vehicle), getPosATL _vehicle, (80 + floor random 160)] spawn defence_ai;
@@ -480,7 +480,7 @@ while {true} do {
 	};
 
 	if (!GRLIB_Commander_mode) then {
-		if (([_sector_pos, (GRLIB_sector_size + 300), GRLIB_side_friendly] call F_getUnitsCount) == 0) then {
+		if (([_sector_pos, (GRLIB_sector_size + 300), GRLIB_side_friendly, 1] call F_getUnitsCount) == 0) then {
 			_sector_despawn_tickets = _sector_despawn_tickets - 1;
 		} else {
 			_sector_despawn_tickets = GRLIB_despawn_tickets;
@@ -528,7 +528,7 @@ if (_sector in active_sectors) then {
 diag_log format ["End Defend Sector %1 at %2", _sector, time];
 
 // Cleanup
-waitUntil { sleep 30; (GRLIB_global_stop == 1 || [_sector_pos, GRLIB_sector_size, GRLIB_side_friendly] call F_getUnitsCount == 0) };
+waitUntil { sleep 30; (GRLIB_global_stop == 1 || [_sector_pos, GRLIB_sector_size, GRLIB_side_friendly, 1] call F_getUnitsCount == 0) };
 diag_log format ["Cleanup Defend Sector %1 at %2", _sector, time];
 private _managed_units = missionNamespace getVariable [format ["LRX_sector_%1_units", _sector], []];
 { deleteVehicle _x } forEach _managed_units;

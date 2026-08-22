@@ -32,7 +32,7 @@ blufor_flag = "Flag_NATO_F";
 // 	["C_Plane_Civil_01_F", "C_Heli_light_01_sheriff_F"]
 // ];
 
-// [CLASSNAME, MANPOWER, AMMO, FUEL, RANK]
+// [CLASSNAME, MANPOWER, AMMO, FUEL, RANK, DESC]
 infantry_units_west = [
 	["Alsatian_Random_F",0,0,0,GRLIB_perm_max],
 	["Fin_random_F",0,0,0,0],
@@ -107,7 +107,8 @@ air_vehicles = [
 	// ["C_Plane_Civil_01_F",1,50,5,GRLIB_perm_air],
 	["B_Heli_Light_01_F",1,50,15,GRLIB_perm_log],
 	// ["B_Heli_Light_01_dynamicLoadout_F",1,150,15,GRLIB_perm_tank],
-	["I_Heli_light_03_unarmed_F",1,50,5,GRLIB_perm_tank]
+	["I_Heli_light_03_unarmed_F",1,50,5,GRLIB_perm_tank],
+	["B_Heli_Transport_01_unarmed_F",1,500,5,GRLIB_perm_air]
 	// ["I_Heli_light_03_dynamicLoadout_F",10,500,20,GRLIB_perm_air],
 	// //["I_Plane_Fighter_03_dynamicLoadout_F", 10,3500,20,GRLIB_perm_max],
 	// ["B_Heli_Transport_03_F",10,1700,35,GRLIB_perm_air],
@@ -115,10 +116,12 @@ air_vehicles = [
 ];
 
 blufor_air = [
-	"B_Heli_Attack_01_F",
+	"B_Heli_Attack_01_dynamicLoadout_F",
+	"B_Heli_Attack_01_pylons_dynamicLoadout_F",
+	"B_Heli_Transport_01_pylons_F",
 	"B_Plane_CAS_01_dynamicLoadout_F",
 	"B_Plane_Fighter_01_F",
-	"B_Heli_Attack_01_F"
+	"B_Heli_Attack_01_dynamicLoadout_F"
 ];
 
 static_vehicles = [

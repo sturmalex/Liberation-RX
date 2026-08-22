@@ -23,7 +23,7 @@ if (_unit == player) then {
 	PAR_backup_loadout = [_unit] call F_getCargoUnit;
 } else {
 	_unit setVariable ["GRLIB_can_speak", false, true];
-	[_unit] spawn F_deathSound;
+	[_unit] call PAR_deathSound;
 };
 [_unit, _unit] call PAR_fn_medicRelease;
 
@@ -37,8 +37,8 @@ private _bld = [_unit] call PAR_spawn_blood;
 
 while { alive _unit && ([_unit] call PAR_is_wounded) && time <= (_unit getVariable ["PAR_BleedOutTimer", 0])} do {
 	_unit setOxygenRemaining 1;
-	private _unit_list = [] call PAR_protected_units;
-	if ( {!([_x] call PAR_is_wounded)} count _unit_list > 0 ) then {
+	private _unit_list = ([_unit] call PAR_protected_units) select { !([_x] call PAR_is_wounded) };
+	if (count _unit_list > 0) then {
 		if (isNil {_unit getVariable "PAR_myMedic"}) then {
 			if (_unit in units player) then {
 				if (_unit getSlotItemName 611 != "") then {

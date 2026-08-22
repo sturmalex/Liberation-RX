@@ -10,7 +10,7 @@ if (surfaceIsWater (getPosATL _unit)) exitWith {};
 if (!local _unit) exitWith { [_unit, _friendly, _canmove] remoteExec ["prisoner_remote_call", 2] };
 
 // Init priso
-doStop _unit;
+_unit switchMove "";
 removeAllWeapons _unit;
 //removeHeadgear _unit;
 removeBackpack _unit;

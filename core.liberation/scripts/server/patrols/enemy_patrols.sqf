@@ -31,7 +31,7 @@ while {true} do {
 				[_level] spawn manage_one_enemy_patrol;
 			} else {
 				[_level] remoteExec ["manage_one_enemy_patrol", owner _hc];
-				diag_log format ["--- LRX Server: Patrol: %1 spawned on %2", _level, _hc];
+				diag_log format ["--- LRX Server: Patrol trigger alert %1 spawned on %2", _level, _hc];
 			};
 		};
 	};

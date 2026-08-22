@@ -92,7 +92,7 @@ while {alive _unit && _continue} do {
 					[_unit, _action, _target] remoteExec ["speak_manager_remote_call", 2];
 				};
 				if (_action == 10) then {
-					playSound3D ["A3\Sounds_F_Tacops\SFX\Missions\Crowd_b.wss", _unit, false, getPosASL _unit, 3, 1, 250];
+					["A3\Sounds_F_Tacops\SFX\Missions\Crowd_b.wss", _unit, false, getPosASL _unit, 3, 1, 250] call F_playSound;
 				};
 				sleep 4;
 			};
@@ -139,9 +139,9 @@ while {alive _unit && _continue} do {
 				_unit setDir (_unit getDir _target);
 				_unit switchMove "ainvpknlmstpslaywrfldnon_medicother";
 				_unit playMoveNow "ainvpknlmstpslaywrfldnon_medicother";
-				playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_repair.wss", _target, false, getPosASL _target, 3, 1, 250];
+				["a3\sounds_f\sfx\ui\vehicles\vehicle_repair.wss", _target, false, getPosASL _target, 3, 1, 250] call F_playSound;
 				sleep 3;
-				playSound3D ["a3\sounds_f\sfx\ui\vehicles\vehicle_repair.wss", _target, false, getPosASL _target, 3, 1, 250];
+				["a3\sounds_f\sfx\ui\vehicles\vehicle_repair.wss", _target, false, getPosASL _target, 3, 1, 250] call F_playSound;
 				sleep 3;
 				{ _target setHitPointDamage [_x, 0] } forEach (getAllHitPointsDamage _target select 0);
 				_unit stop false;
@@ -153,7 +153,7 @@ while {alive _unit && _continue} do {
 
 		//--- Reammo
 		case 4: {
-			_danger = ([_unit, GRLIB_capture_size, GRLIB_side_enemy] call F_getUnitsCount >= 5);
+			_danger = ([_unit, GRLIB_capture_size, GRLIB_side_enemy, 6] call F_getUnitsCount >= 5);
 			if (_danger) then {
 				_ret = [_unit, _target] call _moveTo;
 				if (_ret) then {
@@ -181,7 +181,7 @@ while {alive _unit && _continue} do {
 
 		//--- Help (armed)
 		case 5: {
-			_danger = ([_unit, GRLIB_capture_size, GRLIB_side_enemy] call F_getUnitsCount >= 5);
+			_danger = ([_unit, GRLIB_capture_size, GRLIB_side_enemy, 6] call F_getUnitsCount >= 5);
 			if (_danger && count (units group _target) < 8) then {
 				_ret = [_unit, _target] call _moveTo;
 				if (_ret) then {
@@ -201,7 +201,7 @@ while {alive _unit && _continue} do {
 					_unit setCaptive false;
 					[_unit] spawn {
 						params ["_unit"];
-						waitUntil {sleep 10; (!(alive _unit) || ([_unit, GRLIB_capture_size, GRLIB_side_enemy] call F_getUnitsCount == 0)) };
+						waitUntil {sleep 10; (!(alive _unit) || ([_unit, GRLIB_capture_size, GRLIB_side_enemy, 1] call F_getUnitsCount == 0)) };
 						deleteVehicle _unit;
 					};
 					_continue = false;
@@ -239,7 +239,7 @@ while {alive _unit && _continue} do {
 
 		//--- Attack (armed)
 		case 12: {
-			_danger = ([_unit, GRLIB_capture_size, GRLIB_side_enemy] call F_getUnitsCount >= 5);
+			_danger = ([_unit, GRLIB_capture_size, GRLIB_side_enemy, 6] call F_getUnitsCount >= 5);
 			if (_danger) then {
 				removeAllAssignedItems _unit;
 				_unit addWeapon (selectRandom _weapons_light);
@@ -252,7 +252,7 @@ while {alive _unit && _continue} do {
 				[_new_grp, getPosATL _target] spawn defence_ai;
 				[_unit] spawn {
 					params ["_unit"];
-					waitUntil {sleep 10; !(alive _unit) || ([_unit, GRLIB_capture_size, GRLIB_side_friendly] call F_getUnitsCount == 0) };
+					waitUntil {sleep 10; !(alive _unit) || ([_unit, GRLIB_capture_size, GRLIB_side_friendly, 1] call F_getUnitsCount == 0) };
 					deleteVehicle _unit;
 				};
 				_continue = false;
