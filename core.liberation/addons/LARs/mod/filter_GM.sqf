@@ -30,7 +30,7 @@ GRLIB_MOD_signature = GRLIB_MOD_signature + ["gm_"];
 	configClasses (configfile >> "CfgGlasses" )
 ) apply { GRLIB_whitelisted_from_arsenal pushback (configName _x) } ;
 
-// Magazines
+// Magazines (removed scope)
 (
 	"
 	tolower (getText (_x >> 'dlc')) == 'gm' &&
