@@ -45,3 +45,11 @@ GRLIB_blacklisted_from_arsenal append [
 	"
 	configClasses (configfile >> "CfgWeapons")
 ) apply { GRLIB_whitelisted_from_arsenal pushback (configName _x)} ;
+
+// Magazines (No Ace Mags pls)
+(
+	"
+	tolower ((configName _x) select [0,4]) == 'ace_'
+	"
+	configClasses (configfile >> "CfgMagazines")
+) apply { GRLIB_blacklisted_from_arsenal pushBackUnique (configName _x)} ;
