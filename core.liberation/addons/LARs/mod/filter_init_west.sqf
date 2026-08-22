@@ -107,7 +107,7 @@ if (["USP_", GRLIB_mod_west, true] call F_startsWith) then {
     [] call compileFinal preprocessFileLineNumbers "addons\LARs\mod\filter_USP.sqf";
 };
 
- Magazines (common to All)
+// Magazines (common to All)
 (
 	"
 	getNumber (_x >> 'scope') > 1 &&
