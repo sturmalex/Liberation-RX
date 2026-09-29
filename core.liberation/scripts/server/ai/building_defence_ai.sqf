@@ -2,12 +2,11 @@ params ["_unit", ["_keep_position", false]];
 
 private _resume_movement = false;
 private _target = objNull;
-
 private _sector = [GRLIB_sector_size, _unit] call F_getNearestSector;
 
-sleep 20;
+sleep 10;
 
-while { alive _unit && !(captive _unit) } do {
+while { alive _unit && !_resume_movement && !(captive _unit) } do {
 	_target = ([getPos _unit, 50] call F_getNearbyPlayers) select 0;
 	if (!isNil "_target") then {
 		_unit doWatch _target;
@@ -31,5 +30,8 @@ while { alive _unit && !(captive _unit) } do {
 		(group _unit) setBehaviourStrong "COMBAT";
 	};
 
-	sleep 15;
+	sleep 10;
 };
+
+sleep 5;
+_unit setVariable ["GRLIB_in_building", nil, true];

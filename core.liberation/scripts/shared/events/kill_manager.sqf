@@ -42,6 +42,7 @@ if (isServer) then {
 		if (_unit_class == medic_heal_typename) then {
 			private _med_floor = (nearestObjects [_unit, ["Land_MedicalTent_01_floor_base_F"], 20]) select 0;
 			if (!isNil "_med_floor") then { deleteVehicle _med_floor };
+			GRLIB_redraw_marker_fob = true;
 		};
 		_unit setDamage 1;
 		sleep 5;
@@ -209,7 +210,6 @@ if (isServer) then {
 				stats_blufor_soldiers_killed = stats_blufor_soldiers_killed + 1;
 			};
 		};
-
 	} else {
 		private _bombs = (attachedObjects _unit) select { typeOf _x in sticky_bombs_typename };
 		if (count _bombs > 0) exitWith {

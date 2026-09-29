@@ -12,17 +12,6 @@ private _vehicle_roles_sorted = [];
 } forEach _role_order;
 _vehicle_roles = _vehicle_roles_sorted;
 
-if (!local _vehicle) then {
-	if (count crew _vehicle == 0) then {
-		[_vehicle, clientOwner] remoteExec ["setOwner", 2];
-	} else {
-		private _grp = group (crew _vehicle select 0);
-		[_grp, clientOwner] remoteExec ["setGroupOwner", 2];
-	};
-	waitUntil { sleep 0.2; local _vehicle };
-    sleep 1;
-};
-
 private _turrets = (allTurrets [_vehicle, true]) select { isNull (_vehicle turretUnit _x)};
 private _lock = locked _vehicle;
 private _indx = 0;
@@ -30,6 +19,7 @@ _vehicle lock 0;
 _units allowGetIn true;
 
 {
+    if (!alive _vehicle) exitWith {};
     if (_forEachIndex >= count _vehicle_roles) then {
         if (_delete) then {
             diag_log format ["--- LRX crew overload: unit %1 deleted!", name _x];
@@ -59,9 +49,10 @@ _units allowGetIn true;
             _x assignAsCargo _vehicle;
             _x moveInCargo _vehicle;
         };
+        [_x] orderGetIn true;
         if (!_delete) then { sleep 0.5 };
     };
 } forEach _units;
 
+sleep 0.5;
 _vehicle lock _lock;
-sleep 1;

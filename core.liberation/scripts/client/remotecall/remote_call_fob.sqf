@@ -3,6 +3,7 @@ params ["_fobpos", "_status", ["_info", 0]];
 
 private _fob_name = [_fobpos] call F_getFobName;
 private _fob_type = "FOB";
+
 if (_fobpos in GRLIB_all_outposts) then {_fob_type = "Outpost"};
 
 if (_status == 0) then {

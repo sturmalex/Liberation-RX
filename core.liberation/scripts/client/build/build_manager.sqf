@@ -1,10 +1,11 @@
+waituntil {sleep 1; GRLIB_player_configured};
+
 private [
 	"_unit", "_pos", "_pos_origin", "_classname", "_fob_box",
 	"_idx", "_unitrank", "_ghost_pos", "_ghost_spot", "_ghost_name", "_vehicle",
 	"_actualdir", "_near_objects"
 ];
 
-build_confirmed = 0;
 buildindex = 0;
 build_unit = [];
 build_vehicle = objNull;
@@ -48,6 +49,14 @@ GRLIB_build_force_mode = [
 ];
 
 GRLIB_build_as_building = [
+	land_cutter_typename,
+	playerbox_typename,
+	Warehouse_typename,
+	medic_heal_typename,
+	storage_medium_typename,
+	storage_large_typename,
+	GRLIB_camo_net,
+	Box_Ammo_typename,
 	taxi_helipad_type
 ];
 
@@ -74,6 +83,7 @@ build_altitude = 0;
 build_distance = 0;
 build_radius = 0;
 building_altitude = 0;
+build_confirmed = 0;
 
 waitUntil { sleep 0.2; !isNil "dobuild" };
 
@@ -237,7 +247,7 @@ while {true} do {
 			_pos = getPosATL player;
 			if (surfaceIsWater _pos) then { _pos = getPosASL player };
 			_truedir = 90 - _dir;
-			_truepos = [(_pos select 0) + ((build_distance + build_radius) * (cos _truedir)), (_pos select 1) + ((build_distance + build_radius) * (sin _truedir)), (_pos select 2) + build_altitude];
+			_truepos = [(_pos select 0) + (build_distance * cos _truedir), (_pos select 1) + (build_distance * sin _truedir), (_pos select 2) + build_altitude];
 			_actualdir = (_dir + build_rotation);
 			if (_classname in GRLIB_build_force_mode) then { build_mode = 1 };
 			_actualdir = _actualdir - (floor(_actualdir / 360)) * 360;
@@ -266,7 +276,7 @@ while {true} do {
 			};
 			private _step = round (360 / count _preview_spheres);
 			{
-				_sphere_pos = (_truepos getPos [build_radius, _foreachIndex * _step]);
+				_sphere_pos = (_truepos getPos [build_radius/2, _foreachIndex * _step]);
 				_sphere_pos set [2, (_truepos select 2)];
 				if (_is_water) then {
 					_x setposASL _sphere_pos;
@@ -285,10 +295,9 @@ while {true} do {
 					_near_objects append (_truepos nearObjects _x);
 				} forEach [
 					["AllVehicles", build_radius],
-					[FOB_typename, 12],
-					[FOB_outpost, 10],
-					[Warehouse_typename, 12],
-					[medic_heal_typename, 8]
+					["Static", build_radius],
+					["Cargo_base_F", build_radius],
+					["ReammoBox_F", build_radius]
 				];
 
 				if !(_buildtype in [GRLIB_BuildingBuildType, GRLIB_TrenchBuildType]) then {
@@ -296,12 +305,20 @@ while {true} do {
 				};
 			};
 
+			private _ignore_colisions = [] + GRLIB_ignore_colisions;
+			if (_buildtype == 99) then {
+				_ignore_colisions append [FOB_box_typename, FOB_truck_typename];
+			};
+			if (_buildtype == 98) then {
+				_ignore_colisions append [FOB_box_outpost];
+			};
+
 			// Improved filter out objects that dont actually clip
 			_near_objects = _near_objects select {
 				!(_x isKindOf "Animal") &&
-				!([_x, GRLIB_ignore_colisions] call F_itemIsInClass) &&
-				!(_x isEqualTo player) &&
-				!(_x isEqualTo _vehicle) &&
+				!([_x, _ignore_colisions] call F_itemIsInClass) &&
+				(_x != player) &&
+				(_x != _vehicle) &&
 				{(_truepos distance2D _x < ((0.5 * (sizeOf (typeof _x))) max 1))}
 			};
 
@@ -312,7 +329,7 @@ while {true} do {
 			//Remove redundant check, if its empty, it will set to empty array
 			GRLIB_conflicting_objects = _near_objects;
 
-			_noObjectsClip = (_near_objects isEqualTo []);
+			_noObjectsClip = (count _near_objects == 0);
 			_withinDistance = ((_truepos distance2D _pos_origin) < _maxdist || _buildtype == 97);
 			_boatValid = ((_classname in boats_names || build_water == 1) && _is_water);
 			_surfaceIsValid = (!_is_water || _boatValid);
@@ -393,26 +410,7 @@ while {true} do {
 
 			// Building
 			if (_buildtype == GRLIB_BuildingBuildType || _classname in GRLIB_build_as_building) exitWith {
-				private _vehicle = createVehicle [_classname, _veh_pos, [], 0, "CAN_COLLIDE"];
-				_vehicle setVectorDirAndUp [_veh_dir, _veh_vup];
-				_vehicle setPosATL _veh_pos;
-
-				// Magic ClutterCutter
-				if (_classname == land_cutter_typename) then {
-					[_veh_pos] remoteExec ["build_cutter_remote_call", 2];
-					_vehicle allowdamage false;
-				};
-
-				// CamoNet
-				if ([_classname, GRLIB_camo_net] call F_itemIsInClass) then {
-					_vehicle addEventHandler ["HandleDamage", { _this call damage_manager_static }];
-				};
-
-				// MP Killed
-				if ([_classname, GRLIB_quick_delete] call F_itemIsInClass) then {
-					_vehicle addMPEventHandler ["MPKilled", {_this spawn kill_manager}];
-				};
-
+				_vehicle = [_classname, PAR_Grp_ID, _veh_pos, _veh_dir, _veh_vup] call do_build_building;
 				build_vehicle = _vehicle;
 			};
 
@@ -430,41 +428,7 @@ while {true} do {
 
 			// Trench
 			if (_buildtype == GRLIB_TrenchBuildType) exitWith {
-				private _vehicle = createVehicle [_classname, zeropos, [], 100, "CAN_COLLIDE"];
-				_vehicle enableSimulationGlobal false;
-				_vehicle setVectorDirAndUp [_veh_dir, _veh_vup];
-				disableUserInput true;
-				player setDir (player getDir _veh_pos);
-				private _zStart = -1;
-				private _zEnd = round(_veh_pos select 2);
-				private _steps = 12;
-				private _stepHeight = (_zEnd - _zStart) / _steps;
-				for "_i" from 0 to _steps do {
-					if ([player] call PAR_is_wounded) exitWith {};
-					if (_i % 4 == 0) then {
-						playSound3D [getMissionPath "res\dig02.ogg", player, false, getPosASL player, 5, 1, 250];
-						//player playMoveNow "AinvPknlMstpSlayWrflDnon_medicOther";
-						player playMoveNow "AinvPknlMstpSnonWnonDnon_medicUp0";
-					};
-					_newZ = _zStart + (_stepHeight * _i);
-					_vehicle setPosATL [_veh_pos select 0, _veh_pos select 1, _newZ];
-					sleep 1;
-				};
-				sleep 1;
-				disableUserInput false;
-				disableUserInput true;
-				disableUserInput false;
-				if (lifeState player == 'INCAPACITATED') exitWith { deleteVehicle _vehicle };
-				_vehicle setPosATL _veh_pos;
-				_vehicle enableSimulationGlobal true;
-				_vehicle setVariable ["GRLIB_counter_TTL", round(time + 600), true];
-				if (_classname == "Land_PierLadder_F") then {
-					_vehicle setVariable ["R3F_LOG_disabled", false, true];
-				} else {
-					_vehicle setVariable ["R3F_LOG_disabled", true, true];
-				};
-				GRLIB_current_trenches = GRLIB_current_trenches + 1;
-				_vehicle addEventHandler ["Killed", { GRLIB_current_trenches = GRLIB_current_trenches - 1 }];
+				[_classname, _veh_pos, _veh_dir, _veh_vup] call do_build_trench;
 			};
 
 			private _owner = "";
@@ -507,11 +471,11 @@ while {true} do {
 			// Vehicles
 			if (_classname isKindOf "LandVehicle" || _classname isKindOf "Air" || _classname isKindOf "Ship_F") then {
 				// Color
-				if !(_color isEqualTo []) then {
+				if (count _color > 0) then {
 					[_vehicle, _color] call RPT_fnc_TextureVehicle;
 				};
 				// Composant
-				if !(_compo isEqualTo []) then {
+				if (count _compo > 0) then {
 					[_vehicle, _compo] call RPT_fnc_CompoVehicle;
 				};
 				// Remaining Ammo
@@ -523,7 +487,7 @@ while {true} do {
 			};
 
 			// A3 / R3F Inventory
-			if (!(_lst_a3 isEqualTo []) || !(_lst_r3f isEqualTo []) || !(_lst_lrx isEqualTo [])) then {
+			if ((count _lst_a3 > 0) || (count _lst_r3f > 0) || (count _lst_lrx > 0)) then {
 				[_vehicle, _lst_a3, _lst_r3f, _lst_lrx] remoteExec ["load_cargo_remote_call", 2];
 			};
 

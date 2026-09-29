@@ -20,11 +20,14 @@ if (count GRLIB_all_fobs == 0) then {
 } else {
 	_sign setVariable ["GRLIB_vehicle_owner", _owner, true];
 };
+_fob setVariable ["GRLIB_fob_sign", _sign, true];
 
 // FOB Officer
 if (_fob_class == FOB_typename) then {
 	[_fob] call fob_init_officer;
 };
+
+GRLIB_redraw_marker_fob = true;
 
 // if (GRLIB_enable_arsenal == 0) then {
 // 	sleep 1;

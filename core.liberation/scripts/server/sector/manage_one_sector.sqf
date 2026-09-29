@@ -263,16 +263,15 @@ _sector setMarkerText format ["%2 - Loading %1%%", 15, _sectorName];
 } forEach [[_squad1, _infsquad1, 50], [_squad2, _infsquad2, 100], [_squad3, _infsquad3, 100], [_squad4, _infsquad4, 200], [_squad5, _infsquad5, 300]];
 
 // Create vehicles
-if (opforcap_max) then { _vehtospawn = [] };
 if (count _vehtospawn > 0) then {
 	{
 		[_x, _infsquad1, _sector_pos, _sector] spawn {
 			params ["_classname", "_type", "_sector_pos", "_sector"];
 			private _pos = [_sector_pos, (80 + floor random 100)] call F_getRandomPos;
-			private _vehicle = [_pos, _classname, 5, GRLIB_side_enemy, _type] call F_libSpawnVehicle;
+			private _vehicle = [_pos, _classname, 10, GRLIB_side_enemy, _type] call F_libSpawnVehicle;
 			if (!isNull _vehicle) then {
 				(missionNamespace getVariable format ["LRX_sector_%1_vehicles", _sector]) pushBack _vehicle;
-				[group (driver _vehicle), getPosATL _vehicle, (80 + floor random 160)] spawn defence_ai;
+				[group driver _vehicle, getPosATL _vehicle, (80 + floor random 160)] spawn defence_ai;
 			};
 		};
 		_ratio = round linearConversion [0, (count _vehtospawn) - 1, _foreachIndex, 50, 70];
@@ -282,7 +281,6 @@ if (count _vehtospawn > 0) then {
 };
 
 // Create garrison
-if (opforcap_max) then { _building_ai_max = 0 };
 if (_building_ai_max > 0) then {
 	_building_ai_max = (_building_ai_max * GRLIB_building_ai_ratio);
 	if (_sector in sectors_bigtown) then { _building_ai_max = _building_ai_max + 12 };

@@ -1,14 +1,18 @@
 if (!isServer && hasInterface) exitWith {};
 params ["_player", "_classname", "_veh_pos", "_veh_dir", "_veh_vup"];
 
+if (_veh_pos distance2D ([_veh_pos] call F_getNearestFob) <= GRLIB_fob_range) exitWith {};
+
+if (!isNil "GRLIB_fob_inuse") exitWith {};
+GRLIB_fob_inuse = true;
+
 private _vehicle = objNull;
 
 // Ground FOB
 if (_classname in [FOB_typename, FOB_outpost]) then {
 	_vehicle = createVehicle [land_cutter_typename, _veh_pos, [], 0, "CAN_COLLIDE"];
-	_vehicle setPosATL _veh_pos;
 	[_veh_pos] call build_cutter_remote_call;
-	_vehicle = createVehicle [_classname, zeropos, [], 100, "CAN_COLLIDE"];
+	_vehicle = createVehicle [_classname, _veh_pos, [], 0, "CAN_COLLIDE"];
 	_vehicle allowDamage false;
 	_vehicle enableSimulationGlobal true;
 	_vehicle setVectorDirAndUp [_veh_dir, _veh_vup];
@@ -18,7 +22,7 @@ if (_classname in [FOB_typename, FOB_outpost]) then {
 
 // Naval FOB
 if (_classname in ["Land_Destroyer_01_base_F", "Land_Carrier_01_base_F"]) then {
-	_vehicle = createVehicle [_classname, zeropos, [], 100, "CAN_COLLIDE"];
+	_vehicle = createVehicle [_classname, _veh_pos, [], 0, "CAN_COLLIDE"];
 	_vehicle allowDamage false;
 	_vehicle setVectorDirAndUp [_veh_dir, _veh_vup];
 	_vehicle setPosATL _veh_pos;
@@ -37,7 +41,7 @@ if (_classname in ["fob_water1"]) then {
 		_nextpos = (_x select 1);
 		_nextdir = (_x select 2);
 		_nextpos = _veh_pos vectorAdd ([_nextpos, 0] call BIS_fnc_rotateVector2D);
-		_nextobject = createVehicle [_nextclass, zeropos, [], 100, "CAN_COLLIDE"];
+		_nextobject = createVehicle [_nextclass, _veh_pos, [], 0, "CAN_COLLIDE"];
 		_nextobject allowDamage false;
 		_nextobject setDir _nextdir;
 		_nextobject setPosASL _nextpos;
@@ -51,7 +55,7 @@ if (_classname in ["fob_water1"]) then {
 		_curalt = _curalt + 0.5;
 		_veh_pos set [2, _curalt];
 	};
-	_vehicle = createVehicle [FOB_typename, zeropos, [], 100, "CAN_COLLIDE"];
+	_vehicle = createVehicle [FOB_typename, _veh_pos, [], 0, "CAN_COLLIDE"];
 	_vehicle allowDamage false;
 	_vehicle enableSimulationGlobal true;
 	_vehicle setVectorDirAndUp [[0,1,0], [0,0,1]];
@@ -60,15 +64,18 @@ if (_classname in ["fob_water1"]) then {
 
 if (isNull _vehicle) exitWith {
 	diag_log format ["--- LRX Error: Cannot create FOB %1 at %2", _classname, _veh_pos];
+	GRLIB_fob_inuse = nil;
 };
 
-sleep 1;
+sleep 2;
 [_vehicle, getPlayerUID _player] call fob_init;
 
+private _fob_sign = _vehicle getVariable ["GRLIB_fob_sign", objNull];
 private _fob_pos = getPosATL _vehicle;
 if (_classname in ["Land_Destroyer_01_base_F", "Land_Carrier_01_base_F"]) then {
-	_fob_pos = getPosATL (nearestObjects [_fob_pos, [FOB_sign], 200] select 0);
+	_fob_pos = getPosATL _fob_sign;
 };
+
 GRLIB_all_fobs = GRLIB_all_fobs + [_fob_pos];
 if (_classname == FOB_outpost) then { GRLIB_all_outposts pushBack _fob_pos };
 
@@ -78,4 +85,8 @@ publicVariable "GRLIB_all_outposts";
 [_fob_pos, 0] remoteExec ["remote_call_fob", 0];
 stats_fobs_built = stats_fobs_built + 1;
 
+GRLIB_redraw_marker_fob = true;
 if (GRLIB_Commander_mode) then { [] call manage_sectors_commander };
+
+sleep 10;
+GRLIB_fob_inuse = nil;

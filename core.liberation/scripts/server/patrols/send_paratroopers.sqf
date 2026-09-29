@@ -32,22 +32,26 @@ if (_qrf == true) then {
 };
 
 private _go_target = {
-	params ["_grp", "_target", "_spawnpos"];
+	params ["_grp", "_target", "_spawnpos", "_escort"];
 	if (isNull _grp) exitWith {};
 	if ({alive _x} count (units _grp) == 0) exitWith {};
 	[_grp] call F_deleteWaypoints;
+	private _behaviour = "SAFE";
+	private _combatMode = "YELLOW";
+	if (_escort) then {
+		_behaviour = "RED";
+		_combatMode = "COMBAT";
+	};
 	private _waypoint = _grp addWaypoint [_target, 50];
 	_waypoint setWaypointType "MOVE";
 	_waypoint setWaypointSpeed "FULL";
-	_waypoint setWaypointBehaviour "SAFE";
-	_waypoint setWaypointCombatMode "YELLOW";
+	_waypoint setWaypointBehaviour _behaviour;
+	_waypoint setWaypointCombatMode _combatMode;
 	_waypoint setWaypointCompletionRadius 300;
 
 	_waypoint = _grp addWaypoint [_spawnpos, 0];
 	_waypoint setWaypointType "MOVE";
 	_waypoint setWaypointSpeed "FULL";
-	_waypoint setWaypointBehaviour "CARELESS";
-	_waypoint setWaypointCombatMode "BLUE";
 	_waypoint setWaypointCompletionRadius 300;
 	_waypoint setWaypointStatements ["true", "[vehicle this, true, true] spawn F_vehicleClean"];
 	{_x doFollow (leader _grp)} foreach units _grp;
@@ -60,7 +64,7 @@ private _pilot_group = group driver _vehicle;
 private _spawnpos = getPosATL _vehicle;
 _vehicle flyInHeight 350;
 
-private _cargo_seat_free = (_vehicle emptyPositions "Cargo") min 10;
+private _cargo_seat_free = (_vehicle emptyPositions ["Cargo", true]) min 10;
 if (_cargo_seat_free == 0) exitWith {
 	diag_log format ["--- LRX Error bad classname (%1) for troup transport.", typeOf _vehicle];
 	[_vehicle, true, true] spawn F_vehicleClean;
@@ -73,29 +77,15 @@ private _para_group = [_spawnpos, _unitclass, GRLIB_side_enemy, "para"] call F_l
 
 // Move to obj
 [_vehicle, 3600] call F_setUnitTTL;
-[_pilot_group, _targetpos, getPosATL _vehicle] call _go_target;
-[_vehicle] spawn {
-	params ["_vehicle"];
-	sleep 300;
-	if (!alive _vehicle) exitWith {};
-	[_vehicle, true, true] spawn F_vehicleClean;
-};
+[_pilot_group, _targetpos, _spawnpos, false] call _go_target;
 
-if (floor random 3 == 0) then {
-	if (count opfor_air > 0) then {
-		sleep 5;
-		private _escort_veh = [_targetpos, selectRandom opfor_air] call F_libSpawnVehicle;
-		private _escort_group = group driver _escort_veh;
-		_escort_veh flyInHeight 350;
-		[_escort_veh, 1800] call F_setUnitTTL;
-		[_escort_group, _targetpos, _escort_veh] call _go_target;
-		[_escort_veh] spawn {
-			params ["_vehicle"];
-			sleep 300;
-			if (!alive _vehicle) exitWith {};
-			[_vehicle, true, true] spawn F_vehicleClean;
-		};
-	};
+if (floor random 3 == 0 && count opfor_air > 0) then {
+	sleep 5;
+	private _escort_veh = [_targetpos, selectRandom opfor_air] call F_libSpawnVehicle;
+	private _escort_group = group driver _escort_veh;
+	_escort_veh flyInHeight 350;
+	[_escort_veh, 1800] call F_setUnitTTL;
+	[_escort_group, _targetpos, _spawnpos, true] call _go_target;
 };
 
 sleep 1;
@@ -107,6 +97,7 @@ if (_vehicle isKindOf "Plane_Base_F") then { _unload_dist = _unload_dist * 1.5 }
 [_vehicle, _targetpos, _para_group, _unload_dist] spawn {
 	params [ "_vehicle", "_targetpos", "_para_group", "_unload_dist"];
 
+	sleep 10;
 	waitUntil {
 		sleep 0.2;
 		if (_vehicle distance2D _targetpos <= _unload_dist * 3) then {

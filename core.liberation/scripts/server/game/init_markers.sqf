@@ -23,11 +23,10 @@ if (GRLIB_Facilities) then {
 	// REPAIR
 	{
 		// Add repair pickup
-		_spawn_pos = [(markerPos _x), 5, 0, 80, false] call F_findSafePlace;
+		_spawn_pos = [(markerPos _x), 5, 0, 50, false] call F_findSafePlace;
 		if (count _spawn_pos > 0) then {
-			_vehicle = createVehicle [repair_offroad, _spawn_pos, [], 1, "NONE"];
+			_vehicle = createVehicle [repair_offroad, _spawn_pos, [], 0, "CAN_COLLIDE"];
 			_vehicle allowDamage false;
-			_vehicle setPos _spawn_pos;
 			[_vehicle] call F_clearCargo;
 			[_vehicle, "lock", "server"] call F_vehicleLock;
 			_vehicle enableSimulationGlobal true; // enable to keep facility
@@ -52,26 +51,29 @@ if (GRLIB_Facilities) then {
 	} forEach GRLIB_Marker_FUEL;
 
 	// SELL
-	private ["_man", "_manPos"];
+	private ["_man", "_man_pos", "_obj_list"];
 	{
-		_manPos = _x;
-		_man = createAgent [SELL_Man, _manPos, [], 5, "NONE"];
-		_man setCaptive true;
-		_man setVariable ["GRLIB_SELL_group", true, true];
-		_man allowDamage false;
-		_man setPosATL (_manPos vectorAdd [0, 0, 0.1]);
-		doStop _man;
-		[_man, "LHD_krajPaluby"] spawn F_startAnimMP;
-		_marker = createMarkerLocal [format ["marked_sell%1", _forEachIndex], getPosATL _man];
-		_marker setMarkerColorLocal "ColorBlue";
-		_marker setMarkerTypeLocal "mil_dot";
-		_marker setMarkerTextLocal localize "STR_MARKER_SELL";
-		_marker setMarkerSize [0.75, 0.75];
-		GRLIB_Marker_SELL pushBack (getPosATL _man);
+		_man_pos = [_x, 2, 0, 30, false] call F_findSafePlace;
+		if (count _man_pos > 0) then {
+			_man = createAgent [SELL_Man, _man_pos, [], 0, "CAN_COLLIDE"];
+			_man allowDamage false;
+			_man setCaptive true;
+			_man setVariable ["GRLIB_SELL_group", true, true];
+			doStop _man;
+			[_man, "LHD_krajPaluby"] spawn F_startAnimMP;
+			_marker = createMarkerLocal [format ["marked_sell%1", _forEachIndex], getPosATL _man];
+			_marker setMarkerColorLocal "ColorBlue";
+			_marker setMarkerTypeLocal "mil_dot";
+			_marker setMarkerTextLocal localize "STR_MARKER_SELL";
+			_marker setMarkerSize [0.75, 0.75];
+			GRLIB_Marker_SELL pushBack (getPosATL _man);
+		} else {
+			diag_log format ["--- LRX Sell Marker Error: No place to build %1 at pos %2", SELL_Man, _x];
+		};
 	} forEach GRLIB_Marker_SRV;
 
 	// SHOP
-	private ["_shop", "_desk_dir", "_desk_pos", "_desk", "_man", "_offset", "_str"];
+	private ["_shop", "_desk_dir", "_desk_pos", "_desk", "_man", "_man_pos", "_offset", "_str"];
 	private _getRatio = { parseNumber(0.70 min (0.45 + random 0.25) toFixed 2) };
 	private _marker_SHOP = [];
 	{
@@ -99,7 +101,7 @@ if (GRLIB_Facilities) then {
 			if (_str find "spe_shop_02" > 0) then { _desk_dir = (180 +_desk_dir); _offset =  [-1.7, -0.5, 0.7] };		// SPE
 
 			// Create Desk
-			_desk_pos = (getposASL _shop) vectorAdd ([_offset, -_desk_dir] call BIS_fnc_rotateVector2D);
+			_desk_pos = (getPosASL _shop) vectorAdd ([_offset, -_desk_dir] call BIS_fnc_rotateVector2D);
 			_desk = createVehicle ["Land_CashDesk_F", ([] call F_getFreePos), [], 0, "CAN_COLLIDE"];
 			_desk allowDamage false;
 			_desk enableSimulationGlobal false;
@@ -109,15 +111,15 @@ if (GRLIB_Facilities) then {
 
 			// Create Man
 			_desk_dir = (180 + _desk_dir);
-			_manPos = (ASLToATL _desk_pos) vectorAdd ([[0, -0.7, 0.1], -_desk_dir] call BIS_fnc_rotateVector2D);
+			_man_pos = (ASLToATL _desk_pos) vectorAdd ([[0, -0.7, 0.1], -_desk_dir] call BIS_fnc_rotateVector2D);
 			_man = createAgent [SHOP_Man, zeropos, [], 5, "CAN_COLLIDE"];
+			_man allowDamage false;
 			_man setCaptive true;
 			_man setVariable ["GRLIB_SHOP_group", true, true];
 			_man setVariable ["SHOP_ratio", ([] call _getRatio), true];
-			_man allowDamage false;
 			_man disableCollisionWith _desk;
 			_man setDir _desk_dir;
-			_man setPosATL _manPos;
+			_man setPosATL _man_pos;
 			doStop _man;
 			[_man, "AidlPercMstpSnonWnonDnon_AI"] spawn F_startAnimMP;
 			//_man enableSimulationGlobal false; // disabled to keep animation
@@ -188,12 +190,12 @@ _desk enableSimulationGlobal false;
 _desk setDir _desk_dir;
 _desk setPosASL _desk_pos;
 _desk_dir = (180 + _desk_dir);
-_manPos = (ASLToATL _desk_pos) vectorAdd ([[0, -0.7, 0.1], -_desk_dir] call BIS_fnc_rotateVector2D);
+_man_pos = (ASLToATL _desk_pos) vectorAdd ([[0, -0.7, 0.1], -_desk_dir] call BIS_fnc_rotateVector2D);
 _man = createAgent [SHOP_Man, zeropos, [], 5, "CAN_COLLIDE"];
 _man allowDamage false;
 _man disableCollisionWith _desk;
 _man setDir _desk_dir;
-_man setPosATL _manPos;
+_man setPosATL _man_pos;
 doStop _man;
 sleep 7;
 deleteVehicle _desk;

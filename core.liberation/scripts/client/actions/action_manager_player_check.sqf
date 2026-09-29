@@ -93,7 +93,7 @@ GRLIB_checkBuildTrench = {
 
 GRLIB_checkBuildFOB = {
 	params ["_target", "_unit"];
-	(GRLIB_player_is_menuok && !GRLIB_player_near_lhd && count (crew _target) == 0 && !(_target getVariable ["box_in_use", false]))
+	(GRLIB_player_is_menuok && !GRLIB_player_near_lhd && count (crew _target) == 0 && !(_target getVariable ["box_in_use", false]) && !(_target getVariable ["R3F_LOG_disabled", false]))
 };
 
 GRLIB_checkBuildFOBWater = {
@@ -163,6 +163,7 @@ GRLIB_checkVehicleSupport = { (count GRLIB_vehicle_need_support > 0) };
 
 GRLIB_checkEjectCrew = {
 	params ["_target"];
+	if (!GRLIB_vehicle_lock) exitWith { false };
 	if (!alive _target || captive _target) exitWith { false };
 	private _vehicle = objectParent _target;
 	if (isNull _vehicle) exitWith { false };
@@ -175,12 +176,14 @@ GRLIB_checkEjectCrew = {
 
 GRLIB_checkOnboardCrew = {
 	params ["_target"];
+	if (!GRLIB_vehicle_lock) exitWith { false };
 	if (!alive _target || captive _target) exitWith { false };
 	private _vehicle = objectParent _target;
 	if (isNull _vehicle) exitWith { false };
 	if (getPos _vehicle select 2 >= 5) exitWith { false };
 	if (abs (speed vehicle _vehicle) >= 5) exitWith { false };
 	if (_vehicle isKindOf "ParachuteBase") exitWith { false };
+	if (count (fullCrew [_vehicle, "", true] - fullCrew _vehicle) == 0) exitWith { false };
 	if !([_target, _vehicle] call is_owner || [_vehicle] call is_public) exitWith { false };
 	private _onboard_list = { !isPlayer _x && isNull objectParent _x && _x distance2D player <= 30 } count (units player);
 	if (_onboard_list == 0) exitWith { false };

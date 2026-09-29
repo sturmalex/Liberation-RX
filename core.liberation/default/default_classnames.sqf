@@ -109,5 +109,24 @@ LOADOUT_free_items = [];
 // see https://community.bistudio.com/wiki/nearestTerrainObjects for list
 GRLIB_clutter_cutter = ["TREE","SMALL TREE","BUSH","HIDE","HOUSE","FENCE","RUINS","ROCK","ROCKS","BUILDING","WALL"];
 
+// Ammobox not saved (Personal Arsenal)
+GRLIB_Ammobox_temp = [];
+
+// Ammobox you want keep contents
+GRLIB_Ammobox_keep = [
+	playerbox_typename,
+	medicalbox_typename,
+	basic_weapon_typename
+];
+
+// Arty shell not counted for maxshot limit
+GRLIB_artillery_free = [
+	"8Rnd_82mm_Mo_Smoke_white",
+	"8Rnd_82mm_Mo_Flare_white",
+	"vn_mortar_m29_mag_chem_x8",
+	"vn_mortar_m2_mag_lume_x8",
+	"vn_mortar_m29_mag_lume_x8"
+];
+
 // *** LRX DEFAULT BUILDINGS CLASSNAMES ***
 [] call compileFinal preprocessFileLineNumbers "default\default_building_classnames.sqf";
