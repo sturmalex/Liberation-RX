@@ -8,12 +8,12 @@ GRLIB_WaterBarrel_cap = round (6 * GRLIB_resources_multiplier);
 GRLIB_FoodBarrel_cap = round (5 * GRLIB_resources_multiplier);
 
 // It should not be too easy...
-if (GRLIB_difficulty_modifier > 1.5) then {
+/*if (GRLIB_difficulty_modifier > 1.5) then {
 	GRLIB_AmmoBox_cap = 3;
 	GRLIB_FuelBarrel_cap = 4;
 	GRLIB_WaterBarrel_cap = 4;
 	GRLIB_FoodBarrel_cap = 3;
-};
+};*/
 
 private _sectors = [];
 private _passive_delay = (15 * 60);
